@@ -15,14 +15,14 @@ sys.setdefaultencoding('utf-8')
 class broadSpider(scrapy.Spider):
     name = "broad"
 
-    start_urls = ["http://www.guokr.com"]
+    start_urls = ["https://www.15yan.com/story/3DT9U6u3RrK/"]
     
     def parse(self, response):
         items = self.parse_page(response)
         yield items
-        requests = self.extract_links(response)
-        for request in requests:
-            yield request
+#        requests = self.extract_links(response)
+#        for request in requests:
+#            yield request
 
     def extract_links(self, response):
         r = []
@@ -52,6 +52,10 @@ class broadSpider(scrapy.Spider):
         else:
             div_dic = sorted(div_dic.iteritems(), key=lambda d:d[0], reverse=True)
             ps = div_dic[0][1].findAll('p')
+            images = div_dic[0][1].findAll('img')
+            item['image_urls'] = []
+            for img in images:
+                item['image_urls'].append(img['src'])
             text = ""
             for p in ps:
                 text += p.text

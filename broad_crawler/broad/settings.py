@@ -92,7 +92,6 @@ DOWNLOADER_MIDDLEWARES = {
     'broad.middlewares.RandomUserAgent.RandomUserAgent': 200,
 }
 
-
 # Enable or disable extensions
 # See http://scrapy.readthedocs.org/en/latest/topics/extensions.html
 #EXTENSIONS = {
@@ -103,7 +102,12 @@ DOWNLOADER_MIDDLEWARES = {
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
     'broad.pipelines.BroadPipeline': 300,
+    'broad.pipelines.BroadImagesPipeline': 400
+#    'scrapy.pipelines.images.ImagesPipeline': 1
 }
+
+IMAGES_URLS_FIELD = 'image_urls'
+IMAGES_STORE = '.'
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html

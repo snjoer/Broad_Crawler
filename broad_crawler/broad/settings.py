@@ -106,7 +106,6 @@ ITEM_PIPELINES = {
 #    'scrapy.pipelines.images.ImagesPipeline': 1
 }
 
-IMAGES_URLS_FIELD = 'image_urls'
 IMAGES_STORE = '.'
 
 # Enable and configure the AutoThrottle extension (disabled by default)

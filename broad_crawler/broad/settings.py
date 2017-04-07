@@ -14,6 +14,15 @@ BOT_NAME = 'broad'
 SPIDER_MODULES = ['broad.spiders']
 NEWSPIDER_MODULE = 'broad.spiders'
 
+# Enables scheduling storing requests queue in redis.
+SCHEDULER = "scrapy_redis.scheduler.Scheduler"
+
+# Ensure all spiders share same duplicates filter through redis.
+DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+
+REDIS_HOST = 'localhost'
+
+REDIS_PORT = 6379
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENTS = [
@@ -101,12 +110,12 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'broad.pipelines.BroadPipeline': 300,
-    'broad.pipelines.BroadImagesPipeline': 400
+#    'broad.pipelines.MySQLStorePipeline': 300
+    'scrapy_redis.pipelines.RedisPipeline': 300
+#    'broad.pipelines.BroadPipeline': 300,
+#    'broad.pipelines.BroadImagesPipeline': 400
 #    'scrapy.pipelines.images.ImagesPipeline': 1
 }
-
-IMAGES_STORE = '.'
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See http://doc.scrapy.org/en/latest/topics/autothrottle.html

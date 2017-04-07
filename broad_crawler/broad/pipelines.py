@@ -2,6 +2,7 @@ import os
 import sys
 import hashlib
 import scrapy
+import pymysql.cursors
 from scrapy.http import Request
 from scrapy.utils.python import to_bytes
 from scrapy.pipelines.images import ImagesPipeline
@@ -42,3 +43,24 @@ class BroadImagesPipeline(ImagesPipeline):
         command = "mv full/* " + item['title'] + '/pic'
         os.system(command)
         return item  
+
+class MySQLStorePipeline(object):
+    def __init__(self):
+	self.conn = pymysql.connect(host='localhost',\
+                user='root',\
+                db='broad_crawler',\
+                charset='utf8',\
+                cursorclass=pymysql.cursors.DictCursor)
+    def process_item(self, item, spider):
+        try:
+            with self.conn.cursor() as cursor:
+                sql = "INSERT INTO broad VALUES \
+                        ('%s', '%s', '%s', '%s', '%s')" %\
+                        (item['title'], item['url'],\
+                        item['date'], item['content'], item['image_urls'])
+                cursor.execute(sql)
+                self.conn.commit()
+        except Exception as e:
+            print e.message
+        finally:
+            self.conn.close()

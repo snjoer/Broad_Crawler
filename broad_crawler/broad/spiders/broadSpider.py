@@ -29,7 +29,7 @@ class broadSpider(RedisSpider):
         if isinstance(response, HtmlResponse):
             links = link_extractor.extract_links(response)
             for link in links:
-                os.system('redis-cli lpush link ' + link)
+                os.system('redis-cli lpush link ' + link.url)
 
     def parse_page(self, response):
         item = BroadItem()
@@ -45,7 +45,7 @@ class broadSpider(RedisSpider):
         print item['title']
         item['url'] = response.url
         try: 
-            time = response.xpath('//text()').re_first(r'[0-9]{4}-[0-9]{2}-[0-9]{2}')                                                                                   
+            time = response.xpath('//text()').re_first(r'[0-9]{4}-[0-9]{2}-[0-9]{2}') 
             item['time'] = time
         except Exception:
             item['date'] = "none"
@@ -67,5 +67,5 @@ class broadSpider(RedisSpider):
             text = ""
             for p in ps:
                 text += p.text
-            item['content'] = text
+            item['content'] = text.replace('"', '\'\'')
         return item         

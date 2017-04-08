@@ -36,17 +36,18 @@ def main():
     while True:
         source, data = redis_conn.blpop(['broad:items'])
         item = json.loads(data)
-        try:
-            with mysql_conn.cursor() as cursor:
-                sql = "INSERT INTO broad VALUES \
-                        ('%s', '%s', '%s', '%s', %s);" %\
-                        (item['title'], item['url'],\
-                        item['date'], item['content'], item['image_urls'])
-                cursor.execute(sql)
-                mysql_conn.commit()
-                print "Insert one"
-        except Exception, e:
-            print e.message
+#        try:
+#            with mysql_conn.cursor() as cursor:
+        cursor = mysql_conn.cursor()
+        sql = 'INSERT INTO broad VALUES \
+                ("%s", "%s", "%s", "%s", "%s");' %\
+                (item['title'], item['url'],\
+                item['date'], item['content'], item['image_urls'])
+        cursor.execute(sql)
+        mysql_conn.commit()
+        print "Insert one"
+#        except Exception, e:
+#            print e.message
 
 if __name__ == '__main__':
     main()

@@ -1,1 +1,1 @@
-redis-cli lpush link https://www.zhihu.com
+redis-cli lpush link http://news.sina.com.cn

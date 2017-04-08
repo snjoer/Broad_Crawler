@@ -34,20 +34,22 @@ def main():
     redis_conn = connectRedis()
     mysql_conn = connectMySQL()
     while True:
-        source, data = redis_conn.blpop(['broad:items'])
+        source, data = redis_conn.blpop(['content:items'])
         item = json.loads(data)
-#        try:
-#            with mysql_conn.cursor() as cursor:
-        cursor = mysql_conn.cursor()
-        sql = 'INSERT INTO broad VALUES \
-                ("%s", "%s", "%s", "%s", "%s");' %\
-                (item['title'], item['url'],\
-                item['date'], item['content'], item['image_urls'])
-        cursor.execute(sql)
-        mysql_conn.commit()
-        print "Insert one"
-#        except Exception, e:
-#            print e.message
+        try:
+            with mysql_conn.cursor() as cursor:
+                cursor = mysql_conn.cursor()
+                sql = 'INSERT INTO broad VALUES \
+                        ("%s", "%s", "%s", "%s", "%s");' %\
+                        (item['title'], item['url'],\
+                        item['date'], item['content'], item['image_urls'])
+                cursor.execute(sql)
+                mysql_conn.commit()
+            print "Insert one"
+        except Exception, e:
+            print e.message
+            with open('failed', 'a') as f:
+                f.write(item['url'] + '\n')
 
 if __name__ == '__main__':
     main()

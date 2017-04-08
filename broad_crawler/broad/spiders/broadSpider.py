@@ -12,7 +12,43 @@ from broad.items import BroadItem
    
 reload(sys)
 sys.setdefaultencoding('utf-8')
-   
+
+#--------------------------------------------------below
+def isTime(d):
+    strLen = len(d)
+    digit_count = 0
+    for dd in d:
+        if dd.isdigit():
+            digit_count += 1
+    if 30 > strLen > 5 and digit_count*1.0 / strLen > 0.5 and digit_count > 8:
+        return 1
+    else:
+        return 0
+
+def pre_process(times):
+    times = [tm.replace('\n', '').replace('\t', '').replace('\b', '').replace('&nbsp;', '') for tm in times]
+    times = [tm for tm in times if 100 > len(tm) > 0]
+    return times
+
+
+def h1index(title, times):
+    find_hi_index = 1
+    index = len(times) - 1
+    times = times[::-1]
+    i = 0
+    while i < index and find_hi_index:
+        try:
+            a = times[i][0]
+        except IndexError:
+            print 'ERROR index', i
+        else:
+            b = title
+        if a in b:
+            find_hi_index -= 1
+        i += 1
+    return i
+
+#--------------------------------------------------above
 class broadSpider(RedisSpider):
     name = "broad"
    
@@ -44,11 +80,34 @@ class broadSpider(RedisSpider):
             item['title'] = ''
         print item['title']
         item['url'] = response.url
-        try: 
-            time = response.xpath('//text()').re_first(r'[0-9]{4}-[0-9]{2}-[0-9]{2}')                                                                                   
-            item['time'] = time
-        except Exception:
-            item['date'] = "none"
+        #--------------------------------------------------below
+        data = response.body
+        try:
+            chatset = response.encoding
+            data = data.decode(chatset, errors='ignore')
+        except UnicodeDecodeError as e:
+            print e
+            raise UnicodeDecodeError
+        else:
+            title = response.css('title::text').extract_first()
+            title = title.replace('\n', '')
+            times = re.findall(r'>\s*?(.*?)\s*?<', data)
+            times = pre_process(times)
+            start_i = 0
+            # start_i = h1index(title,times)
+            for i in range(start_i, len(times)):
+                tm = times[i]
+                if isTime(tm):
+                    item['date'] = tm
+                    break
+            else:item['date'] = "none"
+
+        #try: 
+        #    time = response.xpath('//text()').re_first(r'[0-9]{4}-[0-9]{2}-[0-9]{2}')                                                                                   
+        #    item['date'] = time
+        #except Exception:
+        #    item['date'] = "none"
+        #--------------------------------------------------above
         divs = soup.findAll('div')
         div_dic = {}
         for div in divs:

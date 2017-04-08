@@ -91,7 +91,7 @@ class broadSpider(RedisSpider):
         else:
             title = response.css('title::text').extract_first()
             title = title.replace('\n', '')
-            times = re.findall(r'>\s*?(.*?)\s*?<', data)
+            times = re.findall(r'>\s*([\s\S]*?)\s*<', data)
             times = pre_process(times)
             start_i = 0
             # start_i = h1index(title,times)

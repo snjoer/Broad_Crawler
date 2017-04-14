@@ -5,12 +5,14 @@ import os
 import re
 import sys 
 import time
+import scrapy
 from bs4 import BeautifulSoup
+from broad.items import BroadItem
 from scrapy_redis.spiders import RedisSpider
 from scrapy.http import Request, HtmlResponse
 from scrapy.linkextractors import LinkExtractor
-from broad.items import BroadItem 
-   
+from scrapy.utils.project import get_project_settings
+
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -47,18 +49,34 @@ def h1index(title, times):
         i += 1
     return i
 
-class contentSpider(RedisSpider):
-    name = "content"
-   
-    redis_key = 'page'
+class BroadCrawlSpider(RedisSpider):
+    name = "broad"
+    redis_key = "start_url"
+    postfix = ""
+
+    def __init__(self):
+        settings = get_project_settings()
+        self.__class__.postfix = settings.get('POSTFIX')
 
     def parse(self, response):
+        links = self.extractLinks(response)
         items = self.parse_page(response)
-        command = "redis-cli lpush link " + response.url
-        os.system(command)
-        if items['title'] != '': 
+        if items['title'] != '':
             yield items
+        links = self.extractLinks(response)
+        for link in links:
+            yield scrapy.Request(link, callback=self.parse)
 
+    def extractLinks(self, response):
+        retv = []
+        link_extractor = LinkExtractor()
+        if isinstance(response, HtmlResponse):
+            links = link_extractor.extract_links(response)
+            for link in links:
+                if self.postfix in link.url:
+                    retv.append(link.url)
+        return retv
+    
     def parse_page(self, response):
         item = BroadItem()
         soup = BeautifulSoup(response.text, "lxml")
@@ -71,6 +89,7 @@ class contentSpider(RedisSpider):
         else:
             item['title'] = ''
         print item['title']
+        print response.url
         item['url'] = response.url
         data = response.body
         try:

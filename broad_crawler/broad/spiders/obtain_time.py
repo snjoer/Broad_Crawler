@@ -48,7 +48,7 @@ def h1index(title, times):
         i += 1
     return i
 
-def xx(response):
+def obtain_t(response):
     data = response.body
     try:
         chatset = response.encoding

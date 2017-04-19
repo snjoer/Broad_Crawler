@@ -25,7 +25,7 @@ REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 
 POSTFIX = 'sina.com.cn'
-
+sqlite_name = 'sample.db'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENTS = [
     "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; AcooBrowser; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
@@ -112,11 +112,12 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-#    'broad.pipelines.MySQLStorePipeline': 300
-    'scrapy_redis.pipelines.RedisPipeline': 300
+#    'broad.pipelines.MySQLStorePipeline': 300,
+    'broad.pipelines.SQLiteStorePipeline': 300,
+    'scrapy_redis.pipelines.RedisPipeline': 300,
 #    'broad.pipelines.BroadPipeline': 300,
-#    'broad.pipelines.BroadImagesPipeline': 400
-#    'scrapy.pipelines.images.ImagesPipeline': 1
+#    'broad.pipelines.BroadImagesPipeline': 400,
+#    'scrapy.pipelines.images.ImagesPipeline': 1,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

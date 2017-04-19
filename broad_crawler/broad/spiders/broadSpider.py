@@ -12,7 +12,7 @@ from scrapy_redis.spiders import RedisSpider
 from scrapy.http import Request, HtmlResponse
 from scrapy.linkextractors import LinkExtractor
 from scrapy.utils.project import get_project_settings
-from obtain_time import xx
+from obtain_time import obtain_t
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
@@ -60,7 +60,7 @@ class BroadCrawlSpider(RedisSpider):
         print response.url
         item['url'] = response.url
 
-        item['date'] = xx(response)
+        item['date'] = obtain_t(response)
         print item['date']
 
         divs = soup.findAll('div')

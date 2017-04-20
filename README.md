@@ -19,8 +19,11 @@ The broad crawler should support the following features:
 
 ## Requirements
 * Python 2.7
-* Scrapy >= 1.1
-* BeautifulSoup >= x.x
+* Scrapy 1.3.3
+* beautifulsoup4 4.5.3
+* scrapy-redis 0.6.8
+* PyMySQL 0.7.11
+* redis 2.10.5
 * virtualenv (Optional)
 
 ## Usage
